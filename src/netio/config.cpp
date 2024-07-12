@@ -68,7 +68,7 @@ namespace ToyServer::NetIO
 
         advanceCursor();
 
-        return std::optional {SocketConfig {sockfd, family, socktype, protocol, timeout}};
+        return std::optional {SocketConfig {sockfd, timeout}};
     }
 
     AddrInfo::~AddrInfo() noexcept

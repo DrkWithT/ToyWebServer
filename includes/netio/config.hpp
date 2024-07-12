@@ -9,7 +9,12 @@ namespace ToyServer::NetIO
 {
     // Utility decls.
 
-    static constexpr int socket_timeout_default = 10000; // timeout in ms
+    enum class SocketConfigTag
+    {
+        server,
+        client,
+        unknown
+    };
 
     /**
      * @brief Simple aggregate holding important options for setting up an AddrInfo wrapper.
@@ -25,22 +30,12 @@ namespace ToyServer::NetIO
     };
 
     /**
-     * @brief Simple aggregate holding important option values for socket creation.
+     * @brief Simple aggregate holding important option values for server socket creation.
      */
     struct SocketConfig
     {
         int socket_fd; // sockfd : int
-
-        int address_family; // ai_family : int
-
-        int socket_type; // ai_socktype : int
-
-        int transport_protocol; // ai_protocol : int
-
         int rw_timeout; // SO_RECVTIMEO : int
-
-        constexpr SocketConfig(int fd, int addr_family, int sock_type, int layer_protocol, int io_timeout)
-        : socket_fd {fd}, address_family {addr_family}, socket_type {sock_type}, transport_protocol {layer_protocol}, rw_timeout {io_timeout} {}
     };
 
     /**
