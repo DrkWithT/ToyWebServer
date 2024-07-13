@@ -35,6 +35,7 @@ namespace ToyServer::NetIO
     struct SocketConfig
     {
         int socket_fd; // sockfd : int
+        int socket_backlog; // backlog : int
         int rw_timeout; // SO_RECVTIMEO : int
     };
 

@@ -16,7 +16,7 @@ namespace ToyServer::NetIO
 
     public:
         constexpr FixedBuffer(std::size_t capacity_)
-        : block {std::make_unique<char>(capacity_)} {}
+        : block {std::make_unique<char>(capacity_ + 1)} {}
 
         FixedBuffer(const FixedBuffer& other) = delete;
         FixedBuffer& operator=(const FixedBuffer& other) = delete;

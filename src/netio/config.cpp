@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <unistd.h>
 #include <cstring>
 
 #include "netio/config.hpp"
@@ -46,7 +47,7 @@ namespace ToyServer::NetIO
         int err_code = 0;
 
         if ((err_code = getaddrinfo(nullptr, port_sv.c_str(), &pre_hints, &opt_head)) != 0)
-            throw std::runtime_error {gai_strerror(err_code)};
+            throw std::runtime_error {std::string {gai_strerror(err_code)}};
 
         so_backlog = backlog;
         so_timeout = timeout;
@@ -66,9 +67,15 @@ namespace ToyServer::NetIO
         int sockfd = socket(family, socktype, protocol);
         int timeout = so_timeout;
 
+        if (bind(sockfd, temp->ai_addr, temp->ai_addrlen) == -1)
+        {
+            close(sockfd);
+            sockfd = -1;
+        }
+
         advanceCursor();
 
-        return std::optional {SocketConfig {sockfd, timeout}};
+        return std::optional {SocketConfig {sockfd, .socket_backlog=so_backlog, timeout}};
     }
 
     AddrInfo::~AddrInfo() noexcept
