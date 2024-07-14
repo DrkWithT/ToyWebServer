@@ -16,7 +16,6 @@ namespace ToyServer::Uri
     enum class UrlItemTag
     {
         ur_none,
-        ur_file,
         ur_params
     };
 
@@ -41,12 +40,6 @@ namespace ToyServer::Uri
     };
 
     template <>
-    struct UrlItemChooser<UrlItemTag::ur_file>
-    {
-        using type = std::string;
-    };
-
-    template <>
     struct UrlItemChooser<UrlItemTag::ur_params>
     {
         using type = std::map<std::string, std::string>;
@@ -64,8 +57,14 @@ namespace ToyServer::Uri
     struct Url
     {
         std::string path;
-        std::variant<NullUrlItem, std::string, std::map<std::string, std::string>> content;
+        std::variant<NullUrlItem, std::map<std::string, std::string>> content;
         UrlItemTag tag;
+
+        constexpr Url(std::string path_)
+        : path {path_}, content (NullUrlItem {}), tag {UrlItemTag::ur_none} {}
+
+        Url(std::string path_, std::map<std::string, std::string> params_)
+        : path {path_}, content (std::move(params_)), tag {UrlItemTag::ur_params} {}
     };
 
     /**

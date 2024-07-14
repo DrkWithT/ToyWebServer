@@ -16,8 +16,5 @@ namespace ToyServer::Uri
     constexpr UrlItemTag url_item_tag_v<NullUrlItem> = UrlItemTag::ur_none;
 
     template <>
-    constexpr UrlItemTag url_item_tag_v<std::string> = UrlItemTag::ur_file;
-
-    template <>
     constexpr UrlItemTag url_item_tag_v<std::map<std::string, std::string>> = UrlItemTag::ur_params;
 }
