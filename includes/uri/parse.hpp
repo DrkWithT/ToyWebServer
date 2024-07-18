@@ -41,9 +41,9 @@ namespace ToyServer::Uri
     std::string getLexeme(const Token& token, const std::string& source);
 
     /// @brief Lexing helper function.
-    constexpr bool isWordSymbol(char c)
+    constexpr bool isAlphaNum(char c)
     {
-        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+        return c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9');
     }
 
     /**

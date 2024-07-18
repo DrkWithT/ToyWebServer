@@ -2,6 +2,7 @@
 .cache
 .git
 .vscode
+Testing
 build
 
 .env

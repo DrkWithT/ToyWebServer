@@ -35,7 +35,9 @@ namespace ToyServer::Uri
 
     Token UrlLexer::lexSingle(TokenTag tag)
     {
-        std::size_t temp_start = pos++;
+        std::size_t temp_start = pos;
+        pos += 1;
+
         return {temp_start, 1, tag};
     }
 
@@ -44,15 +46,15 @@ namespace ToyServer::Uri
         std::size_t start = pos;
         std::size_t count = 0;
 
-        while (atEOS())
+        while (!atEOS())
         {
             char s = symbols[pos];
 
-            if (!isWordSymbol(s))
+            if (!isAlphaNum(s))
                 break;
 
-            count++;
-            pos++;
+            count += 1;
+            pos += 1;
         }
 
         return {start, count, TokenTag::url_word};
@@ -104,7 +106,7 @@ namespace ToyServer::Uri
                 break;
         }
 
-        if (isWordSymbol(temp))
+        if (isAlphaNum(temp))
             return lexWord();
 
         std::size_t unknown_pos = pos++;
@@ -218,6 +220,9 @@ namespace ToyServer::Uri
         previous = {0, 0, TokenTag::url_unknown};
         current = {0, 0, TokenTag::url_unknown};
         lexer.swapState( UrlLexer {url_str});
+
+        /// @note Skip null placeholder tokens for correct parsing.
+        consume(TokenTag::url_any);
     }
 
     Url UrlParser::parseAll()
@@ -234,10 +239,15 @@ namespace ToyServer::Uri
 
             while (true)
             {
+                // 1. Parse key=value url param...
                 auto frag = parseParamPair();
 
                 if (frag.tag == FragmentTag::url_chunkless)
                     break;
+
+                // 2. Eat url param separator if there...
+                if (matchToken(TokenTag::url_ampersand))
+                    consume(TokenTag::url_ampersand);
 
                 auto [key, value] = unpackFragment<FragmentTag::url_param>(frag);
 
