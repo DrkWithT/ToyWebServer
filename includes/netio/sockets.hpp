@@ -1,6 +1,7 @@
 #ifndef SOCKETS_HPP
 #define SOCKETS_HPP
 
+#include <sys/socket.h>
 #include "netio/buffers.hpp"
 #include "netio/config.hpp"
 
@@ -12,6 +13,8 @@ namespace ToyServer::NetIO
     class ServerSocket
     {
     private:
+        static constexpr int socket_fd_placeholder = -1; // invalid socket fd, placeholder only!
+
         int fd;
         int backlog;
         int child_sock_timeout;
@@ -22,7 +25,9 @@ namespace ToyServer::NetIO
         void swapState(ServerSocket&& other) noexcept;
 
     public:
-        constexpr ServerSocket();
+        constexpr ServerSocket()
+        : fd {socket_fd_placeholder}, backlog {0}, child_sock_timeout {0}, closed {true} {}
+
         ServerSocket(SocketConfig config);
 
         ServerSocket(const ServerSocket& other) = delete;
@@ -42,6 +47,8 @@ namespace ToyServer::NetIO
     class ClientSocket
     {
     private:
+        static constexpr int socket_fd_placeholder = -1; // invalid socket fd, placeholder only!
+
         int fd;
         int timeout;
         bool closed;
@@ -52,8 +59,18 @@ namespace ToyServer::NetIO
         void swapState(ClientSocket&& other) noexcept;
 
     public:
-        constexpr ClientSocket();
-        constexpr ClientSocket(SocketConfig config);
+        constexpr ClientSocket()
+        : fd {socket_fd_placeholder}, timeout {0}, closed {true}, peer_ok {false} {}
+
+        constexpr ClientSocket(SocketConfig config)
+        : fd {config.socket_fd}, timeout {config.rw_timeout}, closed {fd != socket_fd_placeholder}, peer_ok {true}
+        {
+            struct linger timeout_opts {};
+            timeout_opts.l_linger = timeout;
+            timeout_opts.l_onoff = 1;
+
+            setsockopt(fd, SOL_SOCKET, SO_LINGER, &timeout_opts, sizeof(timeout_opts));
+        }
 
         ClientSocket(const ClientSocket& other) = delete;
         ClientSocket& operator=(const ClientSocket& other) = delete;

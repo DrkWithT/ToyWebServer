@@ -21,9 +21,9 @@ namespace ToyServer::NetIO
      */
     struct SocketHints
     {
-        std::string socket_port_str;
-        int socket_backlog_num;
-        int socket_timeout_num;
+        std::string socket_port_str;   // port number as text
+        int socket_backlog_num;        // count of pending connections
+        int socket_timeout_num;        // seconds
 
         constexpr SocketHints(const char* port_cstr, int backlog, int timeout) noexcept
         : socket_port_str {port_cstr}, socket_backlog_num {backlog}, socket_timeout_num {timeout} {}
@@ -36,7 +36,7 @@ namespace ToyServer::NetIO
     {
         int socket_fd; // sockfd : int
         int socket_backlog; // backlog : int
-        int rw_timeout; // SO_RECVTIMEO : int
+        int rw_timeout; // SO_LINGER : int
     };
 
     /**

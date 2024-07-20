@@ -20,10 +20,6 @@
 
 namespace ToyServer::NetIO
 {
-    // socket impl. constants
-
-    static constexpr int socket_fd_placeholder = -1; // invalid socket fd, placeholder only!
-
     // ServerSocket private impl.
 
     void ServerSocket::closeFd()
@@ -62,9 +58,6 @@ namespace ToyServer::NetIO
     }
 
     // ServerSocket public impl.
-
-    constexpr ServerSocket::ServerSocket()
-    : fd {socket_fd_placeholder}, backlog {0}, child_sock_timeout {0}, closed {true} {}
 
     ServerSocket::ServerSocket(SocketConfig config)
     : fd {config.socket_fd}, backlog {config.socket_backlog}, child_sock_timeout {config.rw_timeout}, closed {fd != socket_fd_placeholder}
@@ -135,12 +128,6 @@ namespace ToyServer::NetIO
         closed = temp_closed;
         peer_ok = temp_peer_flag;
     }
-
-    constexpr ClientSocket::ClientSocket()
-    : fd {socket_fd_placeholder}, timeout {0}, closed {true}, peer_ok {false} {}
-
-    constexpr ClientSocket::ClientSocket(SocketConfig config)
-    : fd {config.socket_fd}, timeout {config.rw_timeout}, closed {fd != socket_fd_placeholder}, peer_ok {true} {}
 
     ClientSocket::ClientSocket(ClientSocket&& other) noexcept
     {

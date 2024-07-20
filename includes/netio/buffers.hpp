@@ -1,6 +1,7 @@
 #ifndef BUFFERS_HPP
 #define BUFFERS_HPP
 
+#include <utility>
 #include <algorithm>
 #include <memory>
 
@@ -14,12 +15,31 @@ namespace ToyServer::NetIO
         std::unique_ptr<char> block;
         std::size_t capacity;
 
+        constexpr void swapState(FixedBuffer&& other) noexcept
+        {
+            block = std::move(other.block);
+
+            std::size_t temp_capacity = 0;
+            std::swap(temp_capacity, other.capacity);
+            capacity = temp_capacity;
+        }
     public:
         constexpr FixedBuffer(std::size_t capacity_)
         : block {std::make_unique<char>(capacity_ + 1)} {}
 
         FixedBuffer(const FixedBuffer& other) = delete;
         FixedBuffer& operator=(const FixedBuffer& other) = delete;
+
+        constexpr FixedBuffer(FixedBuffer&& other) noexcept
+        {
+            swapState(std::forward<FixedBuffer&&>(other));
+        }
+
+        constexpr FixedBuffer& operator=(FixedBuffer&& other) noexcept
+        {
+            swapState(std::forward<FixedBuffer&&>(other));
+            return *this;
+        }
 
         constexpr std::size_t getCapacity() const noexcept { return capacity; }
 
