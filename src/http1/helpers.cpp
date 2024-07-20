@@ -24,26 +24,26 @@ namespace ToyServer::Http1
     /// Status helpers
 
     template <>
-    constexpr std::string_view h1_status_reason_v<Status::stat_ok> = "OK";
+    constexpr std::string_view h1_status_txt_v<Status::stat_ok> = "200 OK";
 
     template <>
-    constexpr std::string_view h1_status_reason_v<Status::stat_no_content> = "No Content";
+    constexpr std::string_view h1_status_txt_v<Status::stat_no_content> = "204 No Content";
 
     template <>
-    constexpr std::string_view h1_status_reason_v<Status::stat_not_modified> = "Not Modified";
+    constexpr std::string_view h1_status_txt_v<Status::stat_not_modified> = "304 Not Modified";
 
     template <>
-    constexpr std::string_view h1_status_reason_v<Status::stat_bad_request> = "Bad Request";
+    constexpr std::string_view h1_status_txt_v<Status::stat_bad_request> = "400 Bad Request";
 
     template <>
-    constexpr std::string_view h1_status_reason_v<Status::stat_not_found> = "Not Found";
+    constexpr std::string_view h1_status_txt_v<Status::stat_not_found> = "404 Not Found";
 
     template <>
-    constexpr std::string_view h1_status_reason_v<Status::stat_unsupported_media> = "Unsupported Media Type";
+    constexpr std::string_view h1_status_txt_v<Status::stat_unsupported_media> = "415 Unsupported Media Type";
 
     template <>
-    constexpr std::string_view h1_status_reason_v<Status::stat_server_err> = "Internal Server Error";
+    constexpr std::string_view h1_status_txt_v<Status::stat_server_err> = "500 Internal Server Error";
 
     template <>
-    constexpr std::string_view h1_status_reason_v<Status::stat_not_implemented> = "Not Implemented";
+    constexpr std::string_view h1_status_txt_v<Status::stat_not_implemented> = "501 Not Implemented";
 }

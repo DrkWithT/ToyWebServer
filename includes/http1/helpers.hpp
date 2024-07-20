@@ -41,7 +41,7 @@ namespace ToyServer::Http1
 
     /// @brief Template specialization to convert status codes to reasons.
     template <Status S = Status::stat_placeholder>
-    constexpr std::string_view h1_status_reason_v = "Internal Server Error";
+    constexpr std::string_view h1_status_txt_v = "Internal Server Error";
 }
 
 #endif
