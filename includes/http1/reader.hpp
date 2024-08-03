@@ -27,6 +27,9 @@ namespace ToyServer::Http1
         std::string content;
     };
 
+    /**
+     * @brief Helper to read and parse a request including its URL string.
+     */
     class HttpReader
     {
     private:
@@ -36,7 +39,7 @@ namespace ToyServer::Http1
         ToyServer::Uri::UrlParser url_parser;
         FixedBuffer header_buf;
         FixedBuffer body_buf;
-        ClientSocket socket;
+        ClientSocket* socket;
 
         [[nodiscard]] Schema deduceSchema(const std::string& token) const;
         [[nodiscard]] Method deduceMethod(const std::string& token) const;
@@ -56,7 +59,7 @@ namespace ToyServer::Http1
         HttpReader(const HttpReader& other) = delete;
         HttpReader& operator=(const HttpReader& other) = delete;
 
-        void resetState(ClientSocket&& x_socket) noexcept;
+        void resetState(ClientSocket* socket) noexcept;
 
         [[nodiscard]] Request nextRequest();
     };
