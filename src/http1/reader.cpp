@@ -56,7 +56,7 @@ namespace ToyServer::Http1
     {
         std::istringstream str_chop {};
 
-        if (socket.readUntil(http_sp, header_buf) > 0)
+        if (socket->readUntil(http_sp, header_buf) > 0)
             str_chop.str(std::string {header_buf.getBasePtr()});
         else
             throw std::runtime_error {"IOErr: failed to read top request line."};
@@ -98,7 +98,7 @@ namespace ToyServer::Http1
 
         do
         {
-            if (socket.readUntil(http_line_end, header_buf) > 0)
+            if (socket->readUntil(http_line_end, header_buf) > 0)
                 temp_line = std::string {header_buf.getBasePtr()};
             else
                 throw std::runtime_error {"IOErr: failed to read header."};
@@ -117,7 +117,7 @@ namespace ToyServer::Http1
         if (content_len == 0)
             return;
 
-        socket.readInto(content_len, body_buf);
+        socket->readInto(content_len, body_buf);
     }
 
     /* HttpReader public impl. */
@@ -125,9 +125,9 @@ namespace ToyServer::Http1
     HttpReader::HttpReader() noexcept
     : url_parser {}, header_buf {header_buf_size}, body_buf {body_buf_size}, socket {} {}
 
-    void HttpReader::resetState(ClientSocket&& x_socket) noexcept
+    void HttpReader::resetState(ClientSocket* socket) noexcept
     {
-        socket = std::move(x_socket);
+        this->socket = socket;
         body_buf.clearData();
         header_buf.clearData();
     }
