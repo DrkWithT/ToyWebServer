@@ -8,6 +8,16 @@ namespace ToyServer::Http1
     /// HTTP/1.x enums
 
     /**
+     * @brief HTTP 1.x version code
+     */
+    enum class Schema
+    {
+        http_1_0,
+        http_1_1,
+        http_unknown
+    };
+
+    /**
      * @brief HTTP verb code
      */
     enum class Method
