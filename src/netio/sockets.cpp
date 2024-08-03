@@ -1,5 +1,5 @@
 /**
- * @file socket.cpp
+ * @file sockets.cpp
  * @author DrkWithT
  * @brief Implements client and server sockets.
  * @date 2024-07-12
