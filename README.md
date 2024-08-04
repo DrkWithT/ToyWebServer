@@ -18,6 +18,6 @@ A toy HTTP/1.1 web server made with modern C++. It will supports enough to serve
     - Release: `project.sh r`
 
 ### To-Do's:
- 1. Implement response serializer and writer.
- 2. Implement simple single-threaded server.
+ 1. ~~Implement response serializer and writer.~~
+ 2. **Implement simple single-threaded server.**
  3. Refactor single-threaded system to producer-consumer setup.
