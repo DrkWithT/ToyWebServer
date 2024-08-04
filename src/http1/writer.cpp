@@ -90,6 +90,12 @@ namespace ToyServer::Http1
     {
         std::ostringstream sout {};
 
+        sout << stringifySchema(res.schema)
+            << ' ' << stringifyStatus(res.status)
+            << "\r\n";
+
+        sout.str("");
+
         for (const auto& [name, value] : res.headers)
             sout << name << ": " << value << "\r\n";
 

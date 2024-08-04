@@ -17,6 +17,7 @@ namespace ToyServer::Http1
 
     /**
      * @brief Helper to write an HTTP/1.x request to a web client.
+     * @note Throws std::runtime_error on socket I/O failures.
      */
     class HttpWriter
     {
@@ -28,6 +29,7 @@ namespace ToyServer::Http1
         void dumpOutBuffer(std::size_t load_count);
 
         void loadChars(const std::string& content);
+
         void loadChars(const char* octets_ptr, std::size_t len);
 
         void writeLines(const Response& res);
