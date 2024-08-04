@@ -5,12 +5,15 @@
 #include "netio/sockets.hpp"
 #include "http1/helpers.hpp"
 #include "http1/messages.hpp"
-#include "http1/serializer.hpp"
 
 namespace ToyServer::Http1
 {
     using NetIO::FixedBuffer;
     using NetIO::ClientSocket;
+
+    [[nodiscard]] std::string_view stringifySchema(Schema schema);
+
+    [[nodiscard]] std::string_view stringifyStatus(Status status);
 
     /**
      * @brief Helper to write an HTTP/1.x request to a web client.
@@ -19,15 +22,25 @@ namespace ToyServer::Http1
     {
     private:
         FixedBuffer out_buf;  // reply output buffer
-        ClientSocket* socket; // non-owning pointer to use a reader and writer's client socket
+        ClientSocket* socket; // non-owning pointer for socket shared by reader, writer
+        std::size_t buf_count; // octet count within buffer after pre-load
+
+        void dumpOutBuffer(std::size_t load_count);
+
+        void loadChars(const std::string& content);
+        void loadChars(const char* octets_ptr, std::size_t len);
+
+        void writeLines(const Response& res);
+
+        void writePayload(const Response& res);
 
     public:
-        explicit HttpWriter() noexcept;
+        explicit HttpWriter(ClientSocket* socket_ptr) noexcept;
 
         HttpWriter(const HttpWriter& other) = delete;
         HttpWriter& operator=(const HttpWriter& other) = delete;
 
-        [[nodiscard]] bool writeReply(const Response& req);
+        void writeReply(const Response& res);
     };
 }
 
