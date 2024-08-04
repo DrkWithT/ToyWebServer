@@ -67,14 +67,6 @@ namespace ToyServer::Uri
         : path {path_}, content (std::move(params_)), tag {UrlItemTag::ur_params} {}
     };
 
-    /**
-     * @brief Helper template to deduce `UrlItemTag` from a URL payload type.
-     * 
-     * @tparam `Tp` placeholder, filename string, or params only!
-     */
-    template <typename Tp>
-    constexpr UrlItemTag url_item_tag_v = UrlItemTag::ur_none;
-
     template <UrlItemTag UTag>
     constexpr auto unpackItem(const Url& url) -> url_item_t<UTag>
     {

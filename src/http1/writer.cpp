@@ -120,6 +120,10 @@ namespace ToyServer::Http1
 
     void HttpWriter::writeReply(const Response& res)
     {
+        /// @note I do a quick and dirty pre-feeding reset for now. If this gets copied more, I'll pull out a method.
+        out_buf.clearData();
+        buf_count = 0;
+
         writeLines(res);
         writePayload(res);
     }
