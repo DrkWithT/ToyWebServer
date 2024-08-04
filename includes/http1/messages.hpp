@@ -28,6 +28,7 @@ namespace ToyServer::Http1
     struct Response
     {
         Schema schema;
+        Status status;
         std::string_view status_txt;
         std::map<std::string, std::string> headers;
         NetIO::FixedBuffer body;

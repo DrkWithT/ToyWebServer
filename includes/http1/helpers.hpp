@@ -1,8 +1,6 @@
 #ifndef HELPERS_HPP
 #define HELPERS_HPP
 
-#include <string_view>
-
 namespace ToyServer::Http1
 {
     /// HTTP/1.x enums
@@ -14,7 +12,8 @@ namespace ToyServer::Http1
     {
         http_1_0,
         http_1_1,
-        http_unknown
+        http_unknown,
+        last = http_unknown
     };
 
     /**
@@ -22,9 +21,10 @@ namespace ToyServer::Http1
      */
     enum class Method
     {
-        h1_head,    // HEAD
-        h1_get,     // GET
-        h1_unknown  // UNKNOWN
+        h1_head,     // HEAD
+        h1_get,      // GET
+        h1_unknown,
+        last = h1_unknown
     };
 
     /**
@@ -40,18 +40,9 @@ namespace ToyServer::Http1
         stat_unsupported_media, // status 415
         stat_server_err,        // status 500
         stat_not_implemented,   // status 501
-        stat_placeholder = stat_server_err
+        stat_unknown,
+        last = stat_unknown
     };
-
-    /// HTTP/1.x Enum Helpers
-
-    /// @brief Template specialization to convert verbs to strings.
-    template <Method M = Method::h1_unknown>
-    constexpr std::string_view h1_method_v = "UNKNOWN";
-
-    /// @brief Template specialization to convert status codes to reasons.
-    template <Status S = Status::stat_placeholder>
-    constexpr std::string_view h1_status_txt_v = "Internal Server Error";
 }
 
 #endif
