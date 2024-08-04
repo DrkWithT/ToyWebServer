@@ -2,6 +2,7 @@
 #define BUFFERS_HPP
 
 #include <utility>
+#include <string>
 #include <algorithm>
 #include <memory>
 
@@ -74,6 +75,9 @@ namespace ToyServer::NetIO
         char& getAt(std::size_t pos);
 
         void clearData() noexcept;
+
+        [[nodiscard]] bool loadChars(const std::string& content);
+        [[nodiscard]] bool loadChars(const char* octet_ptr, std::size_t len);
     };
 }
 
