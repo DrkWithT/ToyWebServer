@@ -1,7 +1,7 @@
 /**
  * @file writer.cpp
  * @author DrkWithT
- * @brief Implements HttpWriter to buffer and send a response.
+ * @brief Implements HttpWriter to buffer and then send a response.
  * @date 2024-08-03
  */
 
@@ -15,6 +15,7 @@
 namespace ToyServer::Http1
 {
     /* aliases */
+
     using schemas_t = std::array<std::string_view, static_cast<int>(Schema::last)>;
     using statuses_t = std::array<std::string_view, static_cast<int>(Status::last)>;
 
@@ -23,6 +24,8 @@ namespace ToyServer::Http1
     static constexpr std::size_t writer_buf_len = 2048;
 
     static constexpr std::string_view text_foo = ""; // placeholder for invalid enums
+
+    static constexpr std::string_view http_crlf = "\r\n";
 
     static constexpr schemas_t schema_texts = {
         "HTTP/1.0",
@@ -92,14 +95,14 @@ namespace ToyServer::Http1
 
         sout << stringifySchema(res.schema)
             << ' ' << stringifyStatus(res.status)
-            << "\r\n";
+            << http_crlf;
 
         sout.str("");
 
         for (const auto& [name, value] : res.headers)
             sout << name << ": " << value << "\r\n";
 
-        sout << "\r\n";
+        sout << http_crlf;
 
         auto data = sout.str();
         loadChars(data);
