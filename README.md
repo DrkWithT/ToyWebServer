@@ -20,4 +20,6 @@ A toy HTTP/1.1 web server made with modern C++. It will supports enough to serve
 ### To-Do's:
  1. ~~Implement response serializer and writer.~~
  2. **Implement simple single-threaded server.**
+    - Implement listening "producer" callable.
+    - Implement main server driver logic.
  3. Refactor single-threaded system to producer-consumer setup.
