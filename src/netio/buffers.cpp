@@ -26,6 +26,7 @@ namespace ToyServer::NetIO
     {
         octet_ptr_t base_ptr = getBasePtr();
         std::fill(base_ptr, base_ptr + capacity, '\0');
+        length = 0;
     }
 
     [[nodiscard]] bool FixedBuffer::loadChars(const std::string& content)
@@ -43,6 +44,7 @@ namespace ToyServer::NetIO
 
         clearData();
         std::copy(content_begin, content_begin + content.length(), dst_begin);
+        length += content_len;
 
         return true;
     }
@@ -58,6 +60,7 @@ namespace ToyServer::NetIO
         octet_ptr_t dst_begin = getBasePtr();
         clearData();
         std::copy(octet_ptr, octet_ptr + len, dst_begin);
+        length += len;
 
         return true;
     }

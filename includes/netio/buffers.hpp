@@ -15,18 +15,27 @@ namespace ToyServer::NetIO
 
         std::unique_ptr<char> block;
         std::size_t capacity;
+        std::size_t length;
 
+        ///@brief Does swap and reset operation on an xvalue or temporary `FixedBuffer` object.
         constexpr void swapState(FixedBuffer&& other) noexcept
         {
             block = std::move(other.block);
 
             std::size_t temp_capacity = 0;
             std::swap(temp_capacity, other.capacity);
+
+            std::size_t temp_length = 0;
+            std::swap(temp_length, other.length);
+
             capacity = temp_capacity;
         }
     public:
         constexpr FixedBuffer(std::size_t capacity_)
-        : block {std::make_unique<char>(capacity_ + 1)} {}
+        : block {std::make_unique<char>(capacity_ + 1)}, capacity {capacity_}, length {0}
+        {
+            std::fill(block.get(), block.get() + capacity + 1, '\0');
+        }
 
         constexpr FixedBuffer(const FixedBuffer& other)
         {
@@ -37,6 +46,7 @@ namespace ToyServer::NetIO
 
             std::copy(other.block.get(), other.block.get() + other.capacity, block.get());
             capacity = other.capacity;
+            length = other.length;
         }
 
         constexpr FixedBuffer& operator=(const FixedBuffer& other)
@@ -48,6 +58,7 @@ namespace ToyServer::NetIO
 
             std::copy(other.block.get(), other.block.get() + other.capacity, block.get());
             capacity = other.capacity;
+            length = other.length;
 
             return *this;
         }
@@ -60,10 +71,13 @@ namespace ToyServer::NetIO
         constexpr FixedBuffer& operator=(FixedBuffer&& other) noexcept
         {
             swapState(std::forward<FixedBuffer&&>(other));
+
             return *this;
         }
 
         constexpr std::size_t getCapacity() const noexcept { return capacity; }
+
+        constexpr std::size_t getLength() const noexcept { return length; }
 
         constexpr octet_ptr_t getBasePtr() const noexcept { return block.get(); }
 
@@ -76,8 +90,8 @@ namespace ToyServer::NetIO
 
         void clearData() noexcept;
 
-        [[nodiscard]] bool loadChars(const std::string& content);
-        [[nodiscard]] bool loadChars(const char* octet_ptr, std::size_t len);
+        bool loadChars(const std::string& content);
+        bool loadChars(const char* octet_ptr, std::size_t len);
     };
 }
 

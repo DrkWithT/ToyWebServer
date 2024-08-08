@@ -107,13 +107,17 @@ namespace ToyServer::Http1
         auto data = sout.str();
         loadChars(data);
         dumpOutBuffer(data.length());
+
+        resetState(this->socket);
     }
 
     void HttpWriter::writePayload(const Response& res)
     {
-        std::size_t res_body_len = res.body.getCapacity();
+        std::size_t res_body_len = res.body.getLength();
         loadChars(res.body.getBasePtr(), res_body_len);
         dumpOutBuffer(res_body_len);
+
+        resetState(this->socket);
     }
 
     /* HttpWriter public impl. */
@@ -124,10 +128,16 @@ namespace ToyServer::Http1
     void HttpWriter::writeReply(const Response& res)
     {
         /// @note I do a quick and dirty pre-feeding reset for now. If this gets copied more, I'll pull out a method.
-        out_buf.clearData();
-        buf_count = 0;
+        resetState(this->socket);
 
         writeLines(res);
         writePayload(res);
+    }
+
+    void HttpWriter::resetState(ClientSocket* socket_ptr)
+    {
+        this->socket = socket_ptr;
+        out_buf.clearData();
+        buf_count = 0;
     }
 }

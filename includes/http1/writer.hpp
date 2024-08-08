@@ -43,6 +43,8 @@ namespace ToyServer::Http1
         HttpWriter& operator=(const HttpWriter& other) = delete;
 
         void writeReply(const Response& res);
+
+        void resetState(ClientSocket* socket_ptr);
     };
 }
 

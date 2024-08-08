@@ -20,6 +20,10 @@ namespace ToyServer::Http1
         Uri::Url route;
         std::map<std::string, std::string> headers;
         NetIO::FixedBuffer body;
+
+        Request() noexcept;
+
+        Request(Schema schema_, Method method_, Uri::Url route_, std::map<std::string, std::string> headers_, NetIO::FixedBuffer body_) noexcept;
     };
 
     /**
@@ -32,6 +36,10 @@ namespace ToyServer::Http1
         std::string_view status_txt;
         std::map<std::string, std::string> headers;
         NetIO::FixedBuffer body;
+
+        Response() noexcept;
+
+        Response(Schema schema_, Status status_, std::string_view status_txt_, std::map<std::string, std::string> headers_, NetIO::FixedBuffer body_) noexcept;
     };
 }
 
