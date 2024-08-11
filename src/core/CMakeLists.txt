@@ -1,4 +1,3 @@
 add_library(core "")
 
-# TODO: add PRIVATE producer.cpp PRIVATE server.cpp
-target_sources(core PRIVATE worker.cpp)
+target_sources(core PRIVATE worker.cpp PRIVATE producer.cpp)
