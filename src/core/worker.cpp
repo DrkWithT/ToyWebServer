@@ -29,13 +29,14 @@ namespace ToyServer::Core
 
         if (task.tag == TaskTag::tag_halt_work)
         {
+            /// @note Handle poison task from producer thread on SIGINT. You shall not pass!
             return ServingState::end;
         }
 
         if (!resetSocket(task))
         {
-            std::this_thread::sleep_for(1s);
-            return ServingState::repeat;
+            // std::this_thread::sleep_for(0.5s);
+            return ServingState::meet;
         }
 
         return ServingState::request;
@@ -158,8 +159,7 @@ namespace ToyServer::Core
 
         if (tag == TaskTag::tag_placeholder)
         {
-            /// @note destroy invalid connection task by temporary socket disposing it
-            NetIO::ClientSocket x_closer {socket_config};
+            /// @note destroy invalid connection task by ignoring it.
             return false;
         }
 
@@ -199,5 +199,10 @@ namespace ToyServer::Core
                 break;
             }
         }
+
+        writer.resetState(nullptr);
+        reader.resetState(nullptr);
+
+        NetIO::ClientSocket x_closer = std::move(session_socket);
     }
 }
