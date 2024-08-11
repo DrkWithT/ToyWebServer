@@ -17,6 +17,7 @@ namespace ToyServer::NetIO
 
         int fd;
         int backlog;
+        int self_timeout;
         int child_sock_timeout;
         bool closed;
 
@@ -26,9 +27,9 @@ namespace ToyServer::NetIO
 
     public:
         constexpr ServerSocket()
-        : fd {socket_fd_placeholder}, backlog {0}, child_sock_timeout {0}, closed {true} {}
+        : fd {socket_fd_placeholder}, backlog {0}, self_timeout {0}, child_sock_timeout {0}, closed {true} {}
 
-        ServerSocket(SocketConfig config);
+        ServerSocket(SocketConfig config, int listen_timeout);
 
         ServerSocket(const ServerSocket& other) = delete;
         ServerSocket& operator=(const ServerSocket& other) = delete;
@@ -62,15 +63,7 @@ namespace ToyServer::NetIO
         constexpr ClientSocket()
         : fd {socket_fd_placeholder}, timeout {0}, closed {true}, peer_ok {false} {}
 
-        constexpr ClientSocket(SocketConfig config)
-        : fd {config.socket_fd}, timeout {config.rw_timeout}, closed {fd != socket_fd_placeholder}, peer_ok {true}
-        {
-            struct linger timeout_opts {};
-            timeout_opts.l_linger = timeout;
-            timeout_opts.l_onoff = 1;
-
-            setsockopt(fd, SOL_SOCKET, SO_LINGER, &timeout_opts, sizeof(timeout_opts));
-        }
+        ClientSocket(SocketConfig config);
 
         ClientSocket(const ClientSocket& other) = delete;
         ClientSocket& operator=(const ClientSocket& other) = delete;

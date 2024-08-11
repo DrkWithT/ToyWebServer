@@ -59,14 +59,20 @@ namespace ToyServer::NetIO
 
     // ServerSocket public impl.
 
-    ServerSocket::ServerSocket(SocketConfig config)
-    : fd {config.socket_fd}, backlog {config.socket_backlog}, child_sock_timeout {config.rw_timeout}, closed {fd != socket_fd_placeholder}
+    ServerSocket::ServerSocket(SocketConfig config, int listen_timeout)
+    : fd {config.socket_fd}, backlog {config.socket_backlog}, self_timeout {listen_timeout}, child_sock_timeout {config.rw_timeout}, closed {fd != socket_fd_placeholder}
     {
         if (listen(fd, backlog) == -1)
         {
             closeFd();
-            throw std::runtime_error {""};
+            throw std::runtime_error {"Failed to listen on port."};
         }
+
+        struct linger timeout_opts {};
+        timeout_opts.l_linger = self_timeout;
+        timeout_opts.l_onoff = 1;
+
+        setsockopt(fd, SOL_SOCKET, SO_LINGER, &timeout_opts, sizeof(timeout_opts));
     }
 
     ServerSocket::ServerSocket(ServerSocket&& other) noexcept
@@ -127,6 +133,16 @@ namespace ToyServer::NetIO
         timeout = temp_timeout;
         closed = temp_closed;
         peer_ok = temp_peer_flag;
+    }
+
+    ClientSocket::ClientSocket(SocketConfig config)
+    : fd {config.socket_fd}, timeout {config.rw_timeout}, closed {fd != socket_fd_placeholder}, peer_ok {true}
+    {
+        struct linger timeout_opts {};
+        timeout_opts.l_linger = timeout;
+        timeout_opts.l_onoff = 1;
+
+        setsockopt(fd, SOL_SOCKET, SO_LINGER, &timeout_opts, sizeof(timeout_opts));
     }
 
     ClientSocket::ClientSocket(ClientSocket&& other) noexcept

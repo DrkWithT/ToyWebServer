@@ -31,15 +31,12 @@ namespace ToyServer::Core
         explicit SyncedQueue(int limit_) noexcept
         : items {}, mtx {}, limit {limit_} {}
 
-        [[nodiscard]] bool addItem(const naked_t& item)
+        void addItem(const naked_t& item)
         {
             std::lock_guard guard {mtx};
-            bool size_ok = !isFull();
 
-            if (size_ok)
+            if (!isFull())
                 items.push(item);
-
-            return size_ok;
         }
 
         [[nodiscard]] naked_t getItem()
@@ -57,6 +54,15 @@ namespace ToyServer::Core
             }
 
             return temp;
+        }
+
+        void clearAll()
+        {
+            std::lock_guard guard {mtx};
+
+            /// @note STL queue lacks a clear() method, so I swap with an empty one.
+            std::queue<naked_t> temp;
+            std::swap(items, temp);
         }
     };
 }
