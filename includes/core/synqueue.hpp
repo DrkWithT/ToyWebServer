@@ -17,10 +17,6 @@ namespace ToyServer::Core
         std::mutex mtx;            // mutex for synchronization of read/write
         int limit;
 
-        [[nodiscard]] bool isEmpty() const
-        {
-            return items.empty();
-        }
 
         [[nodiscard]] bool isFull() const
         {
@@ -30,6 +26,11 @@ namespace ToyServer::Core
     public:
         explicit SyncedQueue(int limit_) noexcept
         : items {}, mtx {}, limit {limit_} {}
+
+        [[nodiscard]] bool isEmpty() const
+        {
+            return items.empty();
+        }
 
         void addItem(const naked_t& item)
         {
