@@ -1,6 +1,9 @@
 #ifndef WORKER_HPP
 #define WORKER_HPP
 
+#include <condition_variable>
+#include <mutex>
+
 #include "netio/sockets.hpp"
 #include "http1/helpers.hpp"
 #include "http1/messages.hpp"
@@ -37,7 +40,7 @@ namespace ToyServer::Core
         ServingState state;                 // loop state
         bool persist;
 
-        ServingState actionMeet(SyncedQueue<ConnectionTask>& queue_ref);
+        ServingState actionMeet(SyncedQueue<ConnectionTask>& queue_ref, std::mutex& wait_var_mtx, std::condition_variable_any& wait_var);
         ServingState actionRequest();
         ServingState actionProcess();
         ServingState actionReply();
@@ -50,7 +53,7 @@ namespace ToyServer::Core
         [[nodiscard]] bool resetSocket(ConnectionTask task);
 
         /// @note Use with `std::thread`, but make sure to `thread.join()` it.
-        void operator()(SyncedQueue<ConnectionTask>& queue_ref);
+        void operator()(SyncedQueue<ConnectionTask>& queue_ref, std::mutex& wait_var_mtx, std::condition_variable_any& wait_var);
     };
 }
 

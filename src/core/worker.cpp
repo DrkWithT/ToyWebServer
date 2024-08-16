@@ -23,8 +23,12 @@ namespace ToyServer::Core
 
     /* ServerWorker private impl. */
 
-    ServingState ServerWorker::actionMeet(SyncedQueue<ConnectionTask>& queue_ref)
+    ServingState ServerWorker::actionMeet(SyncedQueue<ConnectionTask>& queue_ref, std::mutex& wait_var_mtx, std::condition_variable_any& wait_var)
     {
+        std::unique_lock<std::mutex> locker(wait_var_mtx);
+
+        wait_var.wait(locker, [&queue_ref]{ return !queue_ref.isEmpty(); });
+
         ConnectionTask task = queue_ref.getItem();
 
         if (task.tag == TaskTag::tag_halt_work)
@@ -35,7 +39,7 @@ namespace ToyServer::Core
 
         if (!resetSocket(task))
         {
-            // std::this_thread::sleep_for(0.5s);
+            std::this_thread::sleep_for(0.125s);
             return ServingState::meet;
         }
 
@@ -168,7 +172,7 @@ namespace ToyServer::Core
         return true;
     }
 
-    void ServerWorker::operator()(SyncedQueue<ConnectionTask>& queue_ref)
+    void ServerWorker::operator()(SyncedQueue<ConnectionTask>& queue_ref, std::mutex& wait_var_mtx, std::condition_variable_any& wait_var)
     {
         while (state != ServingState::end)
         {
@@ -178,7 +182,7 @@ namespace ToyServer::Core
                 state = ServingState::meet;
                 break;
             case ServingState::meet:
-                state = actionMeet(queue_ref);
+                state = actionMeet(queue_ref, wait_var_mtx, wait_var);
                 break;
             case ServingState::request:
                 state = actionRequest();
