@@ -5,6 +5,8 @@
  * @date 2024-08-06
  */
 
+#include <unistd.h>
+
 #include <chrono>
 #include <string>
 #include <map>
@@ -34,12 +36,12 @@ namespace ToyServer::Core
         if (task.tag == TaskTag::tag_halt_work)
         {
             /// @note Handle poison task from producer thread on SIGINT. You shall not pass!
+            write(STDOUT_FILENO, "Stopping a worker.\n", 19);
             return ServingState::end;
         }
 
         if (!resetSocket(task))
         {
-            std::this_thread::sleep_for(0.125s);
             return ServingState::meet;
         }
 
@@ -208,5 +210,6 @@ namespace ToyServer::Core
         reader.resetState(nullptr);
 
         NetIO::ClientSocket x_closer = std::move(session_socket);
+        write(STDOUT_FILENO, "Ending a worker.\n", 17);
     }
 }

@@ -5,6 +5,8 @@
  * @date 2024-08-10
  */
 
+#include <unistd.h>
+
 #include <thread>
 #include "core/producer.hpp"
 
@@ -12,7 +14,7 @@ namespace ToyServer::Core
 {
     using namespace std::chrono_literals;
 
-    static constexpr int server_socket_wait = 5;
+    static constexpr int server_socket_wait = 7;
 
     ServerProducer::ServerProducer(NetIO::SocketConfig config, int consumer_count_)
     : entry_socket {config, server_socket_wait}, consumer_count {consumer_count_} {}
@@ -25,7 +27,6 @@ namespace ToyServer::Core
         {
             queue.addItem(ConnectionTask {NetIO::SocketConfig {}, TaskTag::tag_halt_work});
             wait_var.notify_one();
-            std::this_thread::sleep_for(0.0625s);
         }
     }
 
@@ -35,6 +36,7 @@ namespace ToyServer::Core
         {
             if (signal_flag.load())
             {
+                write(STDOUT_FILENO, "Sending halt tasks.\n", 20);
                 submitPoisonTasks(queue, wait_var);
                 break;
             }

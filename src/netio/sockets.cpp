@@ -60,7 +60,7 @@ namespace ToyServer::NetIO
     // ServerSocket public impl.
 
     ServerSocket::ServerSocket(SocketConfig config, int listen_timeout)
-    : fd {config.socket_fd}, backlog {config.socket_backlog}, self_timeout {listen_timeout}, child_sock_timeout {config.rw_timeout}, closed {fd != socket_fd_placeholder}
+    : fd {config.socket_fd}, backlog {config.socket_backlog}, self_timeout {listen_timeout}, child_sock_timeout {config.rw_timeout + 1}, closed {fd != socket_fd_placeholder}
     {
         if (listen(fd, backlog) == -1)
         {
